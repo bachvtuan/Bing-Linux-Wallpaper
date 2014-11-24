@@ -8,6 +8,8 @@ import gobject
 
 import threading 
 import time
+from os.path import expanduser
+
 
 #https://wiki.gnome.org/Projects/PyGObject/Threading
 
@@ -19,11 +21,11 @@ curr_mode = all_modes[0]
 
 date_ranges =  service.get_range_dates(curr_mode)
 
-# 1 minute is default
-timer_milliseconds = 60 * 1000
+# 2 minutes is default
+timer_milliseconds = 2 * 60 * 1000
 count_milliseconds = 0
 is_dowloading_wallpapers = False
-wallpapers_folder = "~/Pictures/BingWallpapers"
+wallpapers_folder = os.path.join( expanduser('~'), 'Pictures/BingWallpapers' )
 
 def random_wallpaper(data= None):
   global wallpapers_folder, current_wallpaper;
