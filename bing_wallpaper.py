@@ -11,6 +11,7 @@ import time
 from os.path import expanduser
 
 
+
 #https://wiki.gnome.org/Projects/PyGObject/Threading
 
 # do after 1 second
@@ -19,7 +20,7 @@ current_wallpaper = None
 all_modes = ['Recent 8 days','All']
 curr_mode = all_modes[0]
 
-date_ranges =  service.get_range_dates(curr_mode)
+date_ranges =  helper.get_range_dates(curr_mode)
 
 # 2 minutes is default
 timer_milliseconds = 2 * 60 * 1000
@@ -38,7 +39,7 @@ def set_timer( minutes ):
   temp_milliseconds = minutes * 60 * 1000
 
   if temp_milliseconds != timer_milliseconds:
-    timer_milliseconds = timer_milliseconds
+    timer_milliseconds = temp_milliseconds
     helper.notify("The next wallpaper will be changed after %s" % ( helper.string_label( minutes, 'minute' )  ) )
     refresh_menu()
 
@@ -52,10 +53,10 @@ def set_mode(mode):
   if mode != curr_mode:
     curr_mode = mode
     helper.notify("%s wallpapers are choosen to select random to set as your wallpaper" %( curr_mode ) )
-    date_ranges =  service.get_range_dates(curr_mode)
+    date_ranges =  helper.get_range_dates(curr_mode)
     refresh_menu()
 
-def refresh_daily_wallpaper(data =None):
+def refresh_weekly_wallpaper(data =None):
   start_child( True )
   return None
 
@@ -63,20 +64,36 @@ def kill_child():
   global t;
   t.join()
 
+
+def seperate_menu_item():
+  separator = gtk.SeparatorMenuItem()
+  separator.show()
+  return separator
+
+def create_image_menu( label, image_path ):
+  img = gtk.Image()
+  img.set_from_file( helper.icon_path( image_path ) )
+  
+  menu_item = gtk.ImageMenuItem( label )
+  menu_item.set_image(img)
+  menu_item.set_always_show_image(True)
+
+  return menu_item
+  
+  
+
 def make_menu(event_button = None, event_time = None, data=None):
   global timer_milliseconds, curr_mode, is_dowloading_wallpapers, all_modes
   menu = gtk.Menu()
-  
-  random_item = gtk.MenuItem("Random")
+
+  random_item = create_image_menu( "Random", 'Bing_Icon.png' )
   menu.append(random_item)
   random_item.connect_object("activate", random_wallpaper, "random")
   random_item.show()
 
-  separator = gtk.SeparatorMenuItem()
-  menu.append(separator)
-  separator.show()
+  menu.append( seperate_menu_item() )
 
-  select_timer_item = gtk.MenuItem("Select timer")
+  select_timer_item = create_image_menu( "Select timer", 'clock.png' )
   menu.append(select_timer_item)
 
   sub_menu = gtk.Menu()
@@ -89,16 +106,17 @@ def make_menu(event_button = None, event_time = None, data=None):
     menu_string =  helper.string_label( timer, 'minute' )
 
     if timer * 60 * 1000 == timer_milliseconds:
-      menu_string += " [selected]"
-
-    menu_item = gtk.MenuItem( menu_string )
+      menu_item = create_image_menu( menu_string, 'circle_active.png' )
+    else:
+      menu_item = create_image_menu( menu_string, 'circle_deactive.png' )
+    
     sub_menu.append(menu_item)
 
     menu_item.connect_object("activate", set_timer, timer)
     menu_item.show()
 
 
-  select_wallpaper_item = gtk.MenuItem("Select wallpapers")
+  select_wallpaper_item = create_image_menu( "Select wallpapers", 'folder.png' )
   menu.append(select_wallpaper_item)
 
   sub_menu = gtk.Menu()
@@ -107,9 +125,12 @@ def make_menu(event_button = None, event_time = None, data=None):
   select_wallpaper_item.show()
 
   for mode in all_modes:
-    menu_string =  mode  if mode != curr_mode else mode + " [ selected ]" 
 
-    menu_item = gtk.MenuItem( menu_string )
+    if mode != curr_mode:
+      menu_item = create_image_menu( mode, 'circle_deactive.png' )
+    else:
+      menu_item = create_image_menu( mode, 'circle_active.png' )
+
     sub_menu.append(menu_item)
 
     menu_item.connect_object("activate", set_mode, mode)
@@ -117,14 +138,21 @@ def make_menu(event_button = None, event_time = None, data=None):
 
   #End select wallpaper model
 
+  menu.append( seperate_menu_item() )
+
   if is_dowloading_wallpapers is False:
-    refresh_item = gtk.MenuItem("Refresh")
+
+    refresh_item = create_image_menu( "Refresh", 'refresh.png' )
+    
     menu.append(refresh_item)
-    refresh_item.connect_object("activate", refresh_daily_wallpaper, "refresh")
+
+    refresh_item.connect_object("activate", refresh_weekly_wallpaper, "refresh")
     refresh_item.show()
 
+    menu.append( seperate_menu_item() )
+  
 
-  close_item = gtk.MenuItem("Quit")
+  close_item = create_image_menu( "Quit", 'shutdown.png' )
   menu.append(close_item)
   
   close_item.connect_object("activate", gtk.main_quit,[])
@@ -138,7 +166,7 @@ def start_child(is_force=False):
 
   if is_dowloading_wallpapers is False:
     is_dowloading_wallpapers = True
-    t = threading.Thread(target=service.get_daily_wallpapers, args=(wallpapers_folder,q, is_force))
+    t = threading.Thread(target=service.get_weekly_wallpapers, args=(wallpapers_folder,q, is_force))
     t.daemon = True
     t.start()
 
@@ -152,7 +180,6 @@ def watch():
   global q, child_pid, is_dowloading_wallpapers, timer_milliseconds, count_milliseconds;
 
   count_milliseconds += watch_milliseconds
-
 
   if count_milliseconds >= timer_milliseconds:
     #Set random wallpaper
@@ -172,8 +199,14 @@ def watch():
   if  action == 'child_pid':
     child_pid = message['message']
     print "Child pid is " + str(child_pid)
-  elif action == "daily_complete":
+  elif action == "weekly_complete":
     print "Tool downloaded all dailly wallpapers"
+    is_dowloading_wallpapers = False
+    refresh_menu()
+    kill_child( )
+
+  elif action == "weekly_fail":
+    print "Happended error white download weekly wallpapers"
     is_dowloading_wallpapers = False
     refresh_menu()
     kill_child( )
@@ -182,8 +215,10 @@ def watch():
 
 if __name__ == '__main__':
 
+  #Register to socket to prevent run many instance at one time
+  helper.get_lock('bing_wallpaper')
+
   freeze_support()
-  
 
   q = Queue()
   start_child()
