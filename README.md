@@ -9,8 +9,7 @@ I'm testing on my Ubuntu which is using Unity as an enviroment
 # Install 
 
 ```
-sudo ln -s "$(pwd)/bing_wallpaper.py" /usr/local/bin/bing_wallpaper
-sudo chmod +x /usr/local/bin/bing_wallpaper
+sudo bash install.sh
 ```
 
 # Usage
@@ -28,3 +27,11 @@ bing_wallpaper
 then press enter
 
 The app will appear on taskbar, You can do some options via it's context menu.
+
+# Run app when startup
+Please follow this [link](http://www.howtogeek.com/189995/how-to-manage-startup-applications-in-ubuntu-14.04/)
+In the command text box, you type the value
+
+```
+bing_wallpaper
+```

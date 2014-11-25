@@ -33,7 +33,7 @@ def random_wallpaper( curr_wallpaper, wallpapers_folder, date_ranges):
       return random_wallpaper( curr_wallpaper, wallpapers_folder, date_ranges)
     else:
       set_wallpaper( os.path.join( wallpapers_folder, choose_wallper ) )
-      helper.notify("Wallpaper is set from " + choose_wallper)
+      helper.notify("Your wallpaper is set from " + choose_wallper)
 
       return choose_wallper
 
@@ -60,7 +60,7 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
 
     r = requests.get( weekly_wallpapers_url )
   
-    helper.notify("Downloading all weekly wallpapers to your computer")
+    helper.notify("Downloading all newest wallpapers to your computer")
 
     weekly_wallpapers =  r.json()['images']
 
@@ -70,13 +70,21 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
       
       download_url = home_site + wallpaper['url']
       
+      file_name = wallpaper['startdate'] + "_" + ntpath.basename( wallpaper['url'])
 
-      wallpaper_path = os.path.join(wallpapers_folder, wallpaper['startdate'] + "_" + ntpath.basename( wallpaper['url'] ))
+      temp_path = os.path.join('/tmp', file_name )
+
+      wallpaper_path = os.path.join(wallpapers_folder, file_name )
 
       #Wallpaper doesn't existing
       if os.path.isfile(wallpaper_path) is False or is_force is True:
         helper.notify("Downloading " + wallpaper['copyright'] )
-        urllib.urlretrieve ( download_url, wallpaper_path  )
+
+        #Download to tmp folder first to prevent happend corrupt file while download a wallpaper
+        urllib.urlretrieve ( download_url, temp_path  )
+        #ok. move to wallpaper path when done
+        os.rename( temp_path, wallpaper_path )
+
 
     helper.notify("All weekly wallpapers are downloaded successfully")
 

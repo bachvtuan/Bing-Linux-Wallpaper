@@ -210,7 +210,7 @@ def watch():
     child_pid = message['message']
     print "Child pid is " + str(child_pid)
   elif action == "weekly_complete":
-    print "Tool downloaded all dailly wallpapers"
+    print "Tool downloaded all newest wallpapers"
     is_dowloading_wallpapers = False
     refresh_menu()
     kill_child( )
@@ -234,7 +234,7 @@ if __name__ == '__main__':
 
   if temp_config is not None:
     print "Found previous config"
-    
+
     if 'curr_mode' in temp_config and temp_config['curr_mode'] in all_modes:
       config['curr_mode'] = temp_config['curr_mode']
 
