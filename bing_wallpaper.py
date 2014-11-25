@@ -15,55 +15,65 @@ from os.path import expanduser
 #https://wiki.gnome.org/Projects/PyGObject/Threading
 
 # do after 1 second
-watch_milliseconds = 1000
+
+
 current_wallpaper = None
 all_modes = ['Recent 8 days','All']
-curr_mode = all_modes[0]
-
-date_ranges =  helper.get_range_dates(curr_mode)
 
 # 2 minutes is default
-timer_milliseconds = 2 * 60 * 1000
+
 count_milliseconds = 0
 is_dowloading_wallpapers = False
-wallpapers_folder = os.path.join( expanduser('~'), 'Pictures/BingWallpapers' )
+watch_milliseconds = 1000
+
+#Init default config
+config = {
+  'curr_mode': all_modes[0],
+  'wallpapers_folder': os.path.join( expanduser('~'), 'Pictures/BingWallpapers' ),
+  'timer_milliseconds': 2 * 60 * 1000
+}
+
+date_ranges =  helper.get_range_dates(config['curr_mode'])
+
 
 def random_wallpaper(data= None):
-  global wallpapers_folder, current_wallpaper;
-  current_wallpaper = service.random_wallpaper(current_wallpaper, wallpapers_folder, date_ranges)
+  global config, current_wallpaper;
+  current_wallpaper = service.random_wallpaper(current_wallpaper, config['wallpapers_folder'], date_ranges)
 
 def set_timer( minutes ):
 
-  global timer_milliseconds
+  global config,count_milliseconds
   
   temp_milliseconds = minutes * 60 * 1000
 
-  if temp_milliseconds != timer_milliseconds:
-    timer_milliseconds = temp_milliseconds
+  if temp_milliseconds != config['timer_milliseconds']:
+    config['timer_milliseconds'] = temp_milliseconds
     helper.notify("The next wallpaper will be changed after %s" % ( helper.string_label( minutes, 'minute' )  ) )
+    count_milliseconds = 0
     refresh_menu()
+    helper.save_config( config )
+
 
 def refresh_menu():
   if 'tray_app' in globals():
     tray_app.set_menu( make_menu() )
 
 def set_mode(mode):
-  global curr_mode, date_ranges
+  global config, date_ranges
 
-  if mode != curr_mode:
-    curr_mode = mode
-    helper.notify("%s wallpapers are choosen to select random to set as your wallpaper" %( curr_mode ) )
-    date_ranges =  helper.get_range_dates(curr_mode)
+  if mode != config['curr_mode']:
+    config['curr_mode'] = mode
+    helper.notify("%s wallpapers are choosen to select random to set as your wallpaper" %( config['curr_mode'] ) )
+    date_ranges =  helper.get_range_dates(config['curr_mode'])
     refresh_menu()
+    helper.save_config( config )
 
 def refresh_weekly_wallpaper(data =None):
   start_child( True )
-  return None
 
 def kill_child():
   global t;
   t.join()
-
 
 def seperate_menu_item():
   separator = gtk.SeparatorMenuItem()
@@ -83,7 +93,7 @@ def create_image_menu( label, image_path ):
   
 
 def make_menu(event_button = None, event_time = None, data=None):
-  global timer_milliseconds, curr_mode, is_dowloading_wallpapers, all_modes
+  global config, is_dowloading_wallpapers, all_modes
   menu = gtk.Menu()
 
   random_item = create_image_menu( "Random", 'Bing_Icon.png' )
@@ -105,7 +115,7 @@ def make_menu(event_button = None, event_time = None, data=None):
     
     menu_string =  helper.string_label( timer, 'minute' )
 
-    if timer * 60 * 1000 == timer_milliseconds:
+    if timer * 60 * 1000 == config['timer_milliseconds']:
       menu_item = create_image_menu( menu_string, 'circle_active.png' )
     else:
       menu_item = create_image_menu( menu_string, 'circle_deactive.png' )
@@ -126,7 +136,7 @@ def make_menu(event_button = None, event_time = None, data=None):
 
   for mode in all_modes:
 
-    if mode != curr_mode:
+    if mode != config['curr_mode']:
       menu_item = create_image_menu( mode, 'circle_deactive.png' )
     else:
       menu_item = create_image_menu( mode, 'circle_active.png' )
@@ -166,7 +176,7 @@ def start_child(is_force=False):
 
   if is_dowloading_wallpapers is False:
     is_dowloading_wallpapers = True
-    t = threading.Thread(target=service.get_weekly_wallpapers, args=(wallpapers_folder,q, is_force))
+    t = threading.Thread(target=service.get_weekly_wallpapers, args=(config['wallpapers_folder'],q, is_force))
     t.daemon = True
     t.start()
 
@@ -177,11 +187,11 @@ def start_child(is_force=False):
 
 
 def watch():
-  global q, child_pid, is_dowloading_wallpapers, timer_milliseconds, count_milliseconds;
+  global q, child_pid, is_dowloading_wallpapers, config, count_milliseconds;
 
   count_milliseconds += watch_milliseconds
 
-  if count_milliseconds >= timer_milliseconds:
+  if count_milliseconds >= config['timer_milliseconds']:
     #Set random wallpaper
     print "Set random wallpaper"
     count_milliseconds = 0
@@ -219,6 +229,17 @@ if __name__ == '__main__':
   helper.get_lock('bing_wallpaper')
 
   freeze_support()
+
+  temp_config = helper.get_config()
+
+  if temp_config is not None:
+    print "Found previous config"
+    
+    if 'curr_mode' in temp_config and temp_config['curr_mode'] in all_modes:
+      config['curr_mode'] = temp_config['curr_mode']
+
+    if 'timer_milliseconds' in temp_config :
+      config['timer_milliseconds'] = temp_config['timer_milliseconds']
 
   q = Queue()
   start_child()

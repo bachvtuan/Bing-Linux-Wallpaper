@@ -2,9 +2,10 @@ import os
 import pynotify
 import time
 from datetime import date, timedelta, datetime
-import socket, sys
+import socket, sys, json
 
 g_notice = None
+config_file_path =  os.path.join(os.path.dirname(os.path.realpath(__file__)),'config.json')
 
 def icon_path(file_name):
   if os.name != "nt":
@@ -55,3 +56,21 @@ def get_range_dates(mode):
     curr_date = curr_date - timedelta(1)
     
   return ranges
+
+def get_config():
+  
+  try:
+    
+    with open(config_file_path, 'r') as f:
+      config_obj = json.loads(f.read())
+    
+    return config_obj
+
+  except Exception, e:
+    return None
+
+def save_config(config):
+  
+  with open(config_file_path, 'wb') as f:
+    f.write( json.dumps(config) )
+
