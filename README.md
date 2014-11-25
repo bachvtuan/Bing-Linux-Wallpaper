@@ -3,8 +3,18 @@ Bing-Linux-Wallpaper
 
 This tool downloads wallpapers newest wallpapers from Bing to computer and set as wallpaper on your Linux computer.
 
-I'm testing on my Ubuntu which is using Unity as an enviroment
+I tested on my Ubuntu1 4.04 which is using Unity as an enviroment
 
+# Features
+
+- GUI interface .
+- Choose random wallpapers from the folder store all wallpapers are downloaded from Bing
+- Notify important event on the app.
+- Select timer to change your wallpaper.
+- Select mode to select wallpapers, There are 2 modes, 1 is select the wallpaper is uploaded recent 8 days or all wallpapers.
+- You can use your pictures by copy them to ~/Pictures/BingWallpapers and select mode is "All".
+- Remember your config to use for next time open the app.
+- Refresh wallpapers if needed.
 
 # Install 
 
@@ -34,4 +44,11 @@ In the command text box, you type the value
 
 ```
 bing_wallpaper
+```
+
+
+# Remove
+
+```
+sudo rm /usr/local/bin/bing_wallpaper
 ```
