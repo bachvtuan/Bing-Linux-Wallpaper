@@ -22,6 +22,7 @@ I tested on my Ubuntu1 4.04 which is using Unity as an enviroment and Linux Mint
 sudo apt-get install python-pip
 sudo pip install requests
 sudo apt-get install python-appindicator
+sudo apt-get install python-notify
 ```
 
 
@@ -32,7 +33,7 @@ sudo bash install.sh
 ```
 
 # Usage
-And from terminal you can call app by command
+And from terminal you can call app by command, You shouldn't run as root, just an as normal user
 
 ```
 bing_wallpaper
