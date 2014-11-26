@@ -35,7 +35,7 @@ def set_wallpaper( wallpaper_file_path ):
   elif desktop_environment == 'mate':
     os.system("gsettings set org.mate.background picture-filename '%s'" % ( wallpaper_file_path ))
   elif desktop_environment == 'kde':
-    os.system("dcop kdesktop KBackgroundIface setWallpaper 0 \"%s\" 6'" % ( wallpaper_file_path ))
+    os.system('dcop kdesktop KBackgroundIface setWallpaper 0 "%s" 6' % ( wallpaper_file_path ))
 
 def is_valid( file_name, date_ranges ):
   return  len( date_ranges ) == 0 or file_name[:8] in date_ranges
