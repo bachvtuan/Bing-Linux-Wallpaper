@@ -33,9 +33,6 @@ config = {
   'timer_milliseconds': 2 * 60 * 1000
 }
 
-date_ranges =  helper.get_range_dates(config['curr_mode'])
-
-
 def random_wallpaper(data= None):
   global config, current_wallpaper;
   current_wallpaper = service.random_wallpaper(current_wallpaper, config['wallpapers_folder'], date_ranges)
@@ -240,6 +237,8 @@ if __name__ == '__main__':
 
     if 'timer_milliseconds' in temp_config :
       config['timer_milliseconds'] = temp_config['timer_milliseconds']
+
+  date_ranges =  helper.get_range_dates(config['curr_mode'])
 
   q = Queue()
   start_child()
