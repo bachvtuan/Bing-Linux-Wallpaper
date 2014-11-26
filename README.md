@@ -3,7 +3,7 @@ Bing-Linux-Wallpaper
 
 This tool downloads newest wallpapers from Bing to computer and set as wallpaper on your Linux computer.
 
-I tested on my Ubuntu1 4.04 which is using Unity as an enviroment
+I tested on my Ubuntu1 4.04 which is using Unity as an enviroment and Linux Mint 17 Mate
 
 # Features
 
@@ -15,6 +15,15 @@ I tested on my Ubuntu1 4.04 which is using Unity as an enviroment
 - You can use your pictures by copy them to ~/Pictures/BingWallpapers and select mode is "All".
 - Remember your config to use for next time open the app.
 - Refresh wallpapers if needed.
+
+# Requirement
+
+```
+sudo apt-get install python-pip
+sudo pip install requests
+sudo apt-get install python-appindicator
+```
+
 
 # Install 
 

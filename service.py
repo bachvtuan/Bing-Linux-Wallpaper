@@ -1,4 +1,5 @@
-import requests, json, helper, os
+import requests, json, helper, os, sys
+import subprocess
 import time
 import urllib
 import ntpath
@@ -6,8 +7,35 @@ import ntpath
 home_site = "http://bing.com"
 weekly_wallpapers_url = home_site + "/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=en-US"
 
+
+def get_desktop_environment():
+
+  enviroment_desktops = ['gnome','kde','mate','cinnamon']
+  result = subprocess.check_output( 'pgrep -l "%s"' %  ( "|".join(enviroment_desktops)), shell=True)
+  print result
+  enviroment_name = 'gnome'
+  count_appear = 0
+
+  for enviroment_desktop in enviroment_desktops:
+    count_occur = result.count( enviroment_desktop )
+    if count_occur > count_appear:
+      count_appear = count_occur
+      enviroment_name = enviroment_desktop
+
+  return enviroment_name
+
 def set_wallpaper( wallpaper_file_path ):
-  os.system("gsettings set org.gnome.desktop.background picture-uri file://%s" % ( wallpaper_file_path ))
+  #http://stackoverflow.com/questions/1977694/change-desktop-background
+
+  desktop_environment = get_desktop_environment()
+  print "desktop_environment is " + desktop_environment
+
+  if desktop_environment in ["gnome", "unity", "cinnamon"]:
+    os.system("gsettings set org.gnome.desktop.background picture-uri file://%s" % ( wallpaper_file_path ))
+  elif desktop_environment == 'mate':
+    os.system("gsettings set org.mate.background picture-filename '%s'" % ( wallpaper_file_path ))
+  elif desktop_environment == 'kde':
+    os.system("dcop kdesktop KBackgroundIface setWallpaper 0 \"%s\" 6'" % ( wallpaper_file_path ))
 
 def is_valid( file_name, date_ranges ):
   return  len( date_ranges ) == 0 or file_name[:8] in date_ranges
