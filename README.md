@@ -3,7 +3,7 @@ Bing-Linux-Wallpaper
 
 This tool downloads newest wallpapers from Bing to computer and set as wallpaper on your Linux computer.
 
-I tested on my Ubuntu1 4.04 which is using Unity as an enviroment and Linux Mint 17 Mate
+I tested on my Ubuntu1 4.04 which is using Unity as an enviroment and Linux Mint 17 Mate and Ubuntu 14.10 Gnome
 
 # Features
 
@@ -24,6 +24,9 @@ sudo pip install requests
 sudo apt-get install python-appindicator
 sudo apt-get install python-notify
 ```
+
+## For Gnome3 user
+you should install extension which enable show appindicator on the taskbar from [here](https://extensions.gnome.org/extension/615/appindicator-support/)
 
 
 # Install 
