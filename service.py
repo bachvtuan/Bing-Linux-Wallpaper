@@ -12,7 +12,7 @@ def get_desktop_environment():
 
   enviroment_desktops = ['gnome','kde','mate','cinnamon']
   result = subprocess.check_output( 'pgrep -l "%s"' %  ( "|".join(enviroment_desktops)), shell=True)
-  print result
+  #print result
   enviroment_name = 'gnome'
   count_appear = 0
 

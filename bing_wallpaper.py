@@ -30,7 +30,8 @@ watch_milliseconds = 1000
 config = {
   'curr_mode': all_modes[0],
   'wallpapers_folder': os.path.join( expanduser('~'), 'Pictures/BingWallpapers' ),
-  'timer_milliseconds': 2 * 60 * 1000
+  'timer_milliseconds': 2 * 60 * 1000,
+  'auto_download': True
 }
 
 def random_wallpaper(data= None):
@@ -65,8 +66,23 @@ def set_mode(mode):
     refresh_menu()
     helper.save_config( config )
 
+
+def set_auto_dowload( mode ):
+  global config
+
+  assert( mode in [ True, False ] )
+  if config['auto_download'] == mode:
+    return
+
+  config['auto_download'] = mode
+  refresh_menu()
+  helper.save_config( config )
+
+  if mode:
+    start_child()
+
 def refresh_weekly_wallpaper(data =None):
-  start_child( True )
+  start_child()
 
 def kill_child():
   global t;
@@ -122,6 +138,7 @@ def make_menu(event_button = None, event_time = None, data=None):
     menu_item.connect_object("activate", set_timer, timer)
     menu_item.show()
 
+  #End select timer
 
   select_wallpaper_item = create_image_menu( "Select wallpapers", 'folder.png' )
   menu.append(select_wallpaper_item)
@@ -144,6 +161,29 @@ def make_menu(event_button = None, event_time = None, data=None):
     menu_item.show()
 
   #End select wallpaper model
+
+
+  auto_dowload_item = create_image_menu( "Auto download", 'Bing_Icon.png' )
+  menu.append(auto_dowload_item)
+
+  sub_menu = gtk.Menu()
+
+  auto_dowload_item.set_submenu( sub_menu)
+  auto_dowload_item.show()
+
+  for label, auto_mode in { 'Yes': True,'No': False }.iteritems():
+    if auto_mode != config['auto_download']:
+      menu_item = create_image_menu( label, 'circle_deactive.png' )
+    else:
+      menu_item = create_image_menu( label, 'circle_active.png' )
+
+    sub_menu.append(menu_item)
+
+    menu_item.connect_object("activate", set_auto_dowload, auto_mode)
+    menu_item.show()
+
+  #End select automatic download wallpapers
+
 
   menu.append( seperate_menu_item() )
 
@@ -184,15 +224,17 @@ def start_child(is_force=False):
 
 
 def watch():
-  global q, child_pid, is_dowloading_wallpapers, config, count_milliseconds;
+  global q, child_pid, is_dowloading_wallpapers, config, count_milliseconds
 
-  count_milliseconds += watch_milliseconds
+  if config['auto_download']:
 
-  if count_milliseconds >= config['timer_milliseconds']:
-    #Set random wallpaper
-    print "Set random wallpaper"
-    count_milliseconds = 0
-    random_wallpaper()
+    count_milliseconds += watch_milliseconds
+
+    if count_milliseconds >= config['timer_milliseconds']:
+      #Set random wallpaper
+      print "Set random wallpaper"
+      count_milliseconds = 0
+      random_wallpaper()
 
 
   if q.empty():
@@ -213,7 +255,7 @@ def watch():
     kill_child( )
 
   elif action == "weekly_fail":
-    print "Happended error white download weekly wallpapers"
+    print "Happended error while download weekly wallpapers"
     is_dowloading_wallpapers = False
     refresh_menu()
     kill_child( )
@@ -238,10 +280,17 @@ if __name__ == '__main__':
     if 'timer_milliseconds' in temp_config :
       config['timer_milliseconds'] = temp_config['timer_milliseconds']
 
+    if 'auto_download' in temp_config :
+      config['auto_download'] = temp_config['auto_download']
+
   date_ranges =  helper.get_range_dates(config['curr_mode'])
 
   q = Queue()
-  start_child()
+
+  if config['auto_download']:
+    start_child()
+  else:
+    helper.notify("You disabled automatic download newest wallpapers")
 
   gobject.timeout_add(watch_milliseconds, watch)
   
