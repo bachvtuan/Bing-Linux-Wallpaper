@@ -13,7 +13,7 @@ I tested on my Ubuntu 14.04 which is using Unity as an enviroment and Linux Mint
 - Select timer to change your wallpaper.
 - Select mode to select wallpapers, There are 2 modes, 1 is select the wallpaper is uploaded recent 8 days or all wallpapers.
 - You can use your pictures by copy them to ~/Pictures/BingWallpapers and select mode is "All".
-- You can enable or disale automatic download newest wallpapers
+- You can enable or disable automatic download newest wallpapers
 - Remember your config to use for next time open the app.
 - Refresh wallpapers if needed.
 
