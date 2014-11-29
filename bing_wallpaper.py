@@ -82,7 +82,7 @@ def set_auto_dowload( mode ):
     start_child()
 
 def refresh_weekly_wallpaper(data =None):
-  start_child()
+  start_child( True )
 
 def kill_child():
   global t;
@@ -189,7 +189,7 @@ def make_menu(event_button = None, event_time = None, data=None):
 
   if is_dowloading_wallpapers is False:
 
-    refresh_item = create_image_menu( "Refresh", 'refresh.png' )
+    refresh_item = create_image_menu( "Force Refresh", 'refresh.png' )
     
     menu.append(refresh_item)
 

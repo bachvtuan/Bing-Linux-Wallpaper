@@ -1,4 +1,6 @@
-import requests, json, helper, os, sys
+import json, helper, os, sys
+import urllib2
+#import requests
 import subprocess
 import time
 import urllib
@@ -86,11 +88,12 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
 
   try:
 
-    r = requests.get( weekly_wallpapers_url )
+    #r = requests.get( weekly_wallpapers_url )
+    r = urllib2.urlopen( weekly_wallpapers_url )
   
     helper.notify("Downloading all newest wallpapers to your computer")
 
-    weekly_wallpapers =  r.json()['images']
+    weekly_wallpapers =  json.load(r)['images']
 
     print "There are %s wallpapers on the feed" % (len(weekly_wallpapers))
 
@@ -100,7 +103,7 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
       
       file_name = wallpaper['startdate'] + "_" + ntpath.basename( wallpaper['url'])
 
-      temp_path = os.path.join('/tmp', file_name )
+      #temp_path = os.path.join('/tmp', file_name )
 
       wallpaper_path = os.path.join(wallpapers_folder, file_name )
 
@@ -109,9 +112,11 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
         helper.notify("Downloading " + wallpaper['copyright'] )
 
         #Download to tmp folder first to prevent happend corrupt file while download a wallpaper
-        urllib.urlretrieve ( download_url, temp_path  )
+        #urllib.urlretrieve ( download_url, temp_path  )
         #ok. move to wallpaper path when done
-        os.rename( temp_path, wallpaper_path )
+        #os.rename( temp_path, wallpaper_path )
+
+        urllib.urlretrieve ( download_url, wallpaper_path  )
 
 
     helper.notify("All weekly wallpapers are downloaded successfully")
@@ -131,6 +136,3 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
     pass
   finally:
     pass
-
-  
-  

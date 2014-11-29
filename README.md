@@ -20,8 +20,6 @@ I tested on my Ubuntu 14.04 which is using Unity as an enviroment and Linux Mint
 # Requirement
 
 ```
-sudo apt-get install python-pip
-sudo pip install requests
 sudo apt-get install python-appindicator
 sudo apt-get install python-notify
 ```
