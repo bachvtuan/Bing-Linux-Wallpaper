@@ -9,6 +9,7 @@ import gobject
 import threading 
 import time
 from os.path import expanduser
+import getpass, sys
 
 
 
@@ -255,7 +256,7 @@ def watch():
     kill_child( )
 
   elif action == "weekly_fail":
-    print "Happended error while download weekly wallpapers"
+    print "Happended error while downloading weekly wallpapers"
     is_dowloading_wallpapers = False
     refresh_menu()
     kill_child( )
@@ -263,6 +264,10 @@ def watch():
   return True
 
 if __name__ == '__main__':
+
+  if getpass.getuser() == "root":
+    print "You're root, Please run as normal user"
+    sys.exit()
 
   #Register to socket to prevent run many instance at one time
   helper.get_lock('bing_wallpaper')
