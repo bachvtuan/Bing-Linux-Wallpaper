@@ -12,7 +12,7 @@ weekly_wallpapers_url = home_site + "/HPImageArchive.aspx?format=js&idx=0&n=8&mk
 
 def get_desktop_environment():
 
-  enviroment_desktops = ['gnome','kde','mate','cinnamon']
+  enviroment_desktops = ['gnome','unity','mate','cinnamon','xfce']
   result = subprocess.check_output( 'pgrep -l "%s"' %  ( "|".join(enviroment_desktops)), shell=True)
   #print result
   enviroment_name = 'gnome'
@@ -36,8 +36,9 @@ def set_wallpaper( wallpaper_file_path ):
     os.system("gsettings set org.gnome.desktop.background picture-uri file://%s" % ( wallpaper_file_path ))
   elif desktop_environment == 'mate':
     os.system("gsettings set org.mate.background picture-filename '%s'" % ( wallpaper_file_path ))
-  elif desktop_environment == 'kde':
-    os.system('dcop kdesktop KBackgroundIface setWallpaper 0 "%s" 6' % ( wallpaper_file_path ))
+  elif desktop_environment == 'xfce':
+    os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-show -s true')
+    os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s %s' % (wallpaper_file_path ))
 
 def is_valid( file_name, date_ranges ):
   return  len( date_ranges ) == 0 or file_name[:8] in date_ranges
