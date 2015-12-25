@@ -100,7 +100,10 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
 
     for wallpaper in weekly_wallpapers:
       
-      download_url = wallpaper['url']
+      download_url =  wallpaper['url']
+
+      if home_site not in download_url:
+        download_url = home_site + download_url
       
       file_name = wallpaper['startdate'] + "_" + ntpath.basename( wallpaper['url'])
 
