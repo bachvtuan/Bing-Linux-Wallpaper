@@ -33,12 +33,12 @@ def set_wallpaper( wallpaper_file_path ):
   print "desktop_environment is " + desktop_environment
 
   if desktop_environment in ["gnome", "unity", "cinnamon"]:
-    os.system("gsettings set org.gnome.desktop.background picture-uri file://%s" % ( wallpaper_file_path ))
+    os.system('gsettings set org.gnome.desktop.background picture-uri file://"%s"' % ( wallpaper_file_path ))
   elif desktop_environment == 'mate':
-    os.system("gsettings set org.mate.background picture-filename '%s'" % ( wallpaper_file_path ))
+    os.system('gsettings set org.mate.background picture-filename "%s" %' ( wallpaper_file_path ))
   elif desktop_environment == 'xfce':
     os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-show -s true')
-    os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s %s' % (wallpaper_file_path ))
+    os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s "%s"' % (wallpaper_file_path ))
 
 def is_valid( file_name, date_ranges ):
   return  len( date_ranges ) == 0 or file_name[:8] in date_ranges
@@ -105,7 +105,7 @@ def get_weekly_wallpapers(wallpapers_folder, q, is_force = False):
       if home_site not in download_url:
         download_url = home_site + download_url
       
-      file_name = wallpaper['startdate'] + "_" + ntpath.basename( wallpaper['url'])
+      file_name = wallpaper['startdate'] + "_" +  wallpaper['title'] + ".jpg"
 
       #temp_path = os.path.join('/tmp', file_name )
 
