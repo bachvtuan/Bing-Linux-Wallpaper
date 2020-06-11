@@ -37,8 +37,9 @@ def set_wallpaper( wallpaper_file_path ):
   elif desktop_environment == 'mate':
     os.system('gsettings set org.mate.background picture-filename "%s" %' ( wallpaper_file_path ))
   elif desktop_environment == 'xfce':
-    os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-show -s true')
+    # os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-show -s true')
     os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s "%s"' % (wallpaper_file_path ))
+    os.system('xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s "%s"' % (wallpaper_file_path ))
 
 def is_valid( file_name, date_ranges ):
   return  len( date_ranges ) == 0 or file_name[:8] in date_ranges

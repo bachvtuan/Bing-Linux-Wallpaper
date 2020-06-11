@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-import appindicator
+import ayatana_appindicator
 import gtk, helper, service, os, signal
 
 from multiprocessing import Process, Queue,freeze_support
@@ -301,8 +301,8 @@ if __name__ == '__main__':
   
   gobject.threads_init()
 
-  tray_app = appindicator.Indicator('bing_indicator', helper.icon_path('Bing_Icon.png') , appindicator.CATEGORY_APPLICATION_STATUS)
-  tray_app.set_status( appindicator.STATUS_ACTIVE )
+  tray_app = ayatana_appindicator.Indicator('bing_indicator', helper.icon_path('Bing_Icon.png') , ayatana_appindicator.CATEGORY_APPLICATION_STATUS)
+  tray_app.set_status( ayatana_appindicator.STATUS_ACTIVE )
   tray_app.set_menu( make_menu() )
 
   gtk.gdk.threads_init()

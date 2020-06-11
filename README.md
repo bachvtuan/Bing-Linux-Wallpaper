@@ -21,7 +21,7 @@ I tested on my Ubuntu 14.04 which is using Unity as an enviroment and Linux Mint
 
 ## Ubuntu
 ```
-sudo apt-get install python-appindicator
+sudo apt-get install python-ayatana-appindicator
 sudo apt-get install python-notify
 ```
 

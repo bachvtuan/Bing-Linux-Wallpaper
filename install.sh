@@ -1,4 +1,4 @@
-sudo apt-get install python-appindicator
+sudo apt-get install python-ayatana-appindicator
 sudo apt-get install python-notify
 
 sudo ln -s "$(pwd)/bing_wallpaper.py" /usr/bin/bing_wallpaper
